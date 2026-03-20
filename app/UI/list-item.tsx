@@ -37,7 +37,6 @@ export default function ListItem({ item, singleItem }: { item: Item; singleItem?
                         <p className={`text-sm text-gray-500 max-w-md ${singleItem ? "line-clamp-none" : "line-clamp-3"}`}>{item.description}</p>
                         {singleItem && (
                             <div className="flex items-center gap-2">
-                                <p className="text-sm text-gray-500">Added: {formatLocalDateTime(item.createdAt)}</p>
                                 {!item.tmdb.tmdbId && item.addedData.ownerId &&
                                     <p className="text-sm text-gray-500">Item created and added on {formatLocalDateTime(item.createdAt)} by: {users.find((user) => user.id === item.addedData.ownerId)?.name}</p>}
                                 {item.tmdb.tmdbId && item.addedData.ownerId && <p className="text-sm text-gray-500"> Item added from TMDB on {formatLocalDateTime(item.createdAt)} by: {users.find((user) => user.id === item.addedData.ownerId)?.name}</p>}
