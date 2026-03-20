@@ -21,5 +21,14 @@ export const authOptions: NextAuthOptions = {
             if (session.user) (session.user as any).id = (token as any).userId;
             return session;
         },
+        async redirect({ url, baseUrl }) {
+            if (url === "/api/auth/logout" || url.startsWith("/?signedOut=1")) {
+                return `${baseUrl}/`;
+            }
+            if (url === "/" || url === baseUrl || url === `${baseUrl}/`) {
+                return `${baseUrl}/dashboard`;
+            }
+            return `${baseUrl}/dashboard`;
+        },
     },
 };
