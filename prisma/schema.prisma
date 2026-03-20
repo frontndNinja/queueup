@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---- NextAuth / Auth.js standard models ----
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  accounts      Account[]
+  sessions      Session[]
+
+  queuesOwned   Queue[]       @relation("QueueOwner")
+  memberships   QueueMember[]
+  entriesAdded  Entry[]       @relation("EntryAddedBy")
+  votes         EntryVote[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---- App models ----
+
+model Queue {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  ownerId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner    User          @relation("QueueOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members  QueueMember[]
+  entries  Entry[]
+
+  @@index([ownerId])
+}
+
+model QueueMember {
+  id        String   @id @default(cuid())
+  queueId   String
+  userId    String
+  role      QueueRole @default(MEMBER)
+  createdAt DateTime @default(now())
+
+  queue Queue @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([queueId, userId])
+  @@index([userId])
+}
+
+model Entry {
+  id            String       @id @default(cuid())
+  queueId       String
+  addedByUserId String
+
+  title         String
+  type          EntryType
+  status        EntryStatus  @default(PLANNED)
+  priority      EntryPriority @default(MEDIUM)
+
+  releaseYear   Int?
+  runtimeMinutes Int?
+  whereToWatch  String?
+  notes         String?
+  tags          String[]     @default([])
+
+  source        EntrySource  @default(MANUAL)
+  tmdbId        Int?
+  imdbId        String?
+  posterUrl     String?
+
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  queue   Queue      @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  addedBy User       @relation("EntryAddedBy", fields: [addedByUserId], references: [id], onDelete: Cascade)
+  votes   EntryVote[]
+
+  @@index([queueId, status])
+  @@index([queueId, type])
+}
+
+model EntryVote {
+  id        String    @id @default(cuid())
+  entryId   String
+  userId    String
+  value     VoteValue
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  entry Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([entryId, userId])
+  @@index([userId])
+}
+
+enum QueueRole {
+  OWNER
+  MEMBER
+}
+
+enum EntryType {
+  MOVIE
+  SERIES
+}
+
+enum EntryStatus {
+  PLANNED
+  WATCHED
+  SKIPPED
+}
+
+enum EntryPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum EntrySource {
+  MANUAL
+  TMDB
+}
+
+enum VoteValue {
+  LIKE
+  SUPERLIKE
+}
