@@ -1,21 +1,27 @@
 "use client";
 import { useState } from 'react';
 import SignOutButton from './form-elements/signout-button';
-import { Edit2Icon, UserCircle2 } from "lucide-react";
+import { UserCircle2 } from "lucide-react";
 import { User } from '@/app/definitions/definitions';
 import Image from 'next/image';
-import Link from 'next/link';
 import Button from './base/button';
 import { useRouter } from 'next/navigation';
+import ClickAwayListener from 'react-click-away-listener';
 
 
 
 export default function TopNavigation({ user }: { user: User | null; }) {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const router = useRouter();
+    const handleClickAway = () => {
+        setIsProfileOpen(false);
+    };
     return (
         <div className="flex items-center justify-between h-[70px] px-14 fixed top-0 left-0 right-0 z-50 bg-lighter-background">
-            <Link href="/">Home</Link>
+            <div className="w-fit">
+
+                <Button text="Home" icon="HomeIcon" goTo={'/'} />
+            </div>
             <div className="flex items-center gap-6 relative">
                 {user && (
 
@@ -33,16 +39,19 @@ export default function TopNavigation({ user }: { user: User | null; }) {
                 )}
 
                 <>
-                    <nav className={`${isProfileOpen ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-[-1]"} absolute top-13 right-0 w-[150px] rounded-b-md shadow-md p-2 pt-4 bg-lighter-background transition-all duration-300`}>
-                        <div className="flex flex-col justify-start items-start gap-4">
-                            <Button text="Edit profile" icon="Edit2Icon" goTo={'/profile'} />
-                            {user && (
-                                <div className="flex items-center justify-end group hover:bg-primary/10 rounded-md p-2 w-full cursor-pointer" onClick={() => router.push('/profile')}>
-                                    <SignOutButton colorIcon="group-hover:text-primary" colorText="group-hover:text-white" />
-                                </div>
-                            )}
-                        </div>
-                    </nav>
+                    <ClickAwayListener onClickAway={handleClickAway}>
+                        <nav className={`${isProfileOpen ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-[-1]"} absolute top-13 right-0 w-[150px] rounded-b-md shadow-md p-2 pt-4 bg-lighter-background transition-all duration-300`} onClick={() => setIsProfileOpen(!isProfileOpen)}>
+                            <div className="flex flex-col justify-start items-start gap-4">
+                                <Button text="Edit profile" icon="Edit2Icon" goTo={'/profile'} />
+                                <Button text="Dashboard" icon="LayoutDashboardIcon" goTo={'/dashboard'} />
+                                {user && (
+                                    <div className="flex items-center justify-end group hover:bg-primary/10 rounded-md p-2 w-full cursor-pointer" onClick={() => router.push('/profile')}>
+                                        <SignOutButton colorIcon="group-hover:text-primary" colorText="group-hover:text-white" />
+                                    </div>
+                                )}
+                            </div>
+                        </nav>
+                    </ClickAwayListener>
                 </>
 
 

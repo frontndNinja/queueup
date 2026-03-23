@@ -41,6 +41,9 @@ importers:
       react:
         specifier: 19.2.3
         version: 19.2.3
+      react-click-away-listener:
+        specifier: ^2.4.0
+        version: 2.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react-dom:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
@@ -2694,6 +2697,12 @@ packages:
 
   rc9@2.1.2:
     resolution: {integrity: sha512-btXCnMmRIBINM2LDZoEmOogIZU7Qe7zn4BpomSKZ/ykbLObuBdvG+mFq11DL6fjH1DRwHhrlgtYWG96bJiC7Cg==}
+
+  react-click-away-listener@2.4.0:
+    resolution: {integrity: sha512-jDkXY8Q9qM8e197K7c7AoVhhk2meQO5POyjRJrKN2vUQUvIef49h/paM3JA6q+lf+JygDy9ENOBOsZalARUIeg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   react-dom@19.2.3:
     resolution: {integrity: sha512-yELu4WmLPw5Mr/lmeEpox5rw3RETacE++JgHqQzd2dg+YbJuat3jH4ingc+WPZhxaoFzdv9y33G+F7Nl5O0GBg==}
@@ -5919,6 +5928,11 @@ snapshots:
     dependencies:
       defu: 6.1.4
       destr: 2.0.5
+
+  react-click-away-listener@2.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+    dependencies:
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
 
   react-dom@19.2.3(react@19.2.3):
     dependencies:

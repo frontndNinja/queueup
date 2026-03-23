@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
 import {
     Edit2Icon,
     LogOutIcon,
@@ -9,6 +10,8 @@ import {
     User2Icon,
     LogInIcon,
     PlusIcon,
+    HomeIcon,
+    LayoutDashboardIcon,
 } from "lucide-react";
 
 type IconName =
@@ -17,7 +20,9 @@ type IconName =
     | "UserIcon"
     | "User2Icon"
     | "LogInIcon"
-    | "PlusIcon";
+    | "PlusIcon"
+    | "HomeIcon"
+    | "LayoutDashboardIcon";
 
 const iconMap: Record<IconName, LucideIcon> = {
     Edit2Icon,
@@ -26,6 +31,8 @@ const iconMap: Record<IconName, LucideIcon> = {
     User2Icon,
     LogInIcon,
     PlusIcon,
+    HomeIcon,
+    LayoutDashboardIcon,
 };
 
 export default function Button({
@@ -51,7 +58,7 @@ export default function Button({
     };
 
     return (
-        <button
+        <Link href={goTo ?? ""}
             onClick={handleClick}
             className="flex items-center justify-end group gap-3 hover:bg-primary/10 rounded-md p-2 w-full cursor-pointer"
         >
@@ -59,6 +66,6 @@ export default function Button({
             {IconComponent ? (
                 <IconComponent className="w-[16px] h-[16px] group-hover:text-primary" />
             ) : null}
-        </button>
+        </Link>
     );
 }

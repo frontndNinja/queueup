@@ -19,6 +19,7 @@
     "next": "16.1.7",
     "next-auth": "^4.24.13",
     "react": "19.2.3",
+    "react-click-away-listener": "^2.4.0",
     "react-dom": "19.2.3",
     "react-responsive-carousel": "^3.2.23",
     "shadcn": "^4.1.0",
