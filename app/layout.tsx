@@ -30,9 +30,11 @@ export default async function RootLayout({
   const sessionUser = session?.user;
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body className="bg-white">
-        <TopNavigation user={sessionUser as User} />
-        {children}
+      <body className="bg-background text-foreground">
+        <main className="max-w-[1440px] mx-auto pt-[70px]">
+          <TopNavigation user={sessionUser as User} />
+          {children}
+        </main>
       </body>
     </html>
   );

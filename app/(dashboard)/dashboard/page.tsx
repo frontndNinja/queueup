@@ -1,12 +1,11 @@
 
 import { Metadata } from 'next';
-import SignOutButton from '@/app/UI/form-elements/signout-button';
 import Link from 'next/link';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { users, queues, items } from "@/lib/dummyData";
-import Image from 'next/image';
-import ListItem from '@/app/UI/list-item';
+import BaseButton from "@/app/UI/base/button";
+import ListItemThumb from '@/app/UI/list-item-thumb';
 import {
     Carousel,
     CarouselContent,
@@ -14,6 +13,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
+import { ChevronLeftCircle, ChevronRightCircle } from 'lucide-react';
 
 
 export const metadata: Metadata = {
@@ -27,51 +27,50 @@ export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
 
-    //! NEXT: Vis alle queues der brugeren er medlem af, kun med navn, posters/navn i en karrusel for hver queue
-
-    //TODO:
-    // get queueIds from the user
-    // get queues from the database
-    // display queues in a carousel
     return (
-        <div className="min-h-screen min-w-screen">
-            <main className="bg-gray-50 w-full h-full flex gap-4 flex-col p-4">
-                <h1 className="sm:text-sm-h1">Welcome back to QueueUp, {users.find((user) => user.id === userId)?.name}!</h1>
+        <div className="min-h-screen">
+            <section className="w-full h-full flex gap-4 flex-col p-4">
+                <h1 className="sm:text-lg-p1 mt-8 mb-4 px-6">Welcome back to QueueUp, {users.find((user) => user.id === userId)?.name}!</h1>
                 {users.filter((user) => user.id === userId).map((user) => (
                     <div key={user.id}>
                         <div className="max-w-full">
-                            <h2 className="sm:text-sm-h2 mb-2">Queues</h2>
                             {queues
                                 .filter((queue) => user.queueIds.includes(queue.id))
                                 .map((queue, index) => (
-                                    <div key={queue.id + index}>
-                                        <Link href={`/dashboard/queue/${queue.id}`}>
-                                            <h3 className="sm:text-sm-h3 mb-2">{queue.title}</h3>
-                                        </Link>
-                                        <Carousel
-                                            opts={{
-                                                align: "start",
-                                            }}
-                                            className="w-full max-w-[calc(100%-3rem)]"
-                                        >
-                                            <CarouselContent>
-                                                {queue.items.map((itemId, index) => {
-                                                    const found = items.find((item) => item.id === itemId);
-                                                    if (!found) return null;
-                                                    return (<CarouselItem key={found.id + index} className="basis-1/1 md:basis-1/2 lg:basis-1/3">
-                                                        <ListItem item={found} />
-                                                    </CarouselItem>);
-                                                })};
-                                            </CarouselContent>
-                                            <CarouselPrevious />
-                                            <CarouselNext />
-                                        </Carousel>
+                                    <div key={queue.id + index} className="bg-[linear-gradient(90deg,rgba(0,0,0,0)_0%,rgba(27,36,48,0.1)_15%,rgba(27,36,48,0.2)_30%,rgba(27,36,48,0.2)_50%,rgba(27,36,48,0.2)_70%,rgba(27,36,48,0.1)_85%,rgba(0,0,0,0)_100%)] text-card-foreground px-6 py-4 pb-6 mb-6 rounded-sm">
+                                        <div className='max-w-[1440px] m-auto'>
+                                            <Link href={`/dashboard/queue/${queue.id}`} className="inline-flex">
+                                                <h2 className="sm:text-sm-p1 mb-4 w-fit">{queue.title}</h2>
+                                            </Link>
+                                            <Carousel
+                                                opts={{
+                                                    align: "start",
+                                                    loop: true,
+                                                }}
+                                                className="w-full"
+                                            >
+                                                <CarouselContent>
+                                                    {queue.items.map((itemId, index) => {
+                                                        const found = items.find((item) => item.id === itemId);
+                                                        if (!found) return null;
+                                                        return (<CarouselItem key={found.id + index} className="basis-1/1 xxs:basis-1/2 xs:basis-1/3 sm:basis-1/4 md:basis-1/4 lg:basis-1/5 xl:basis-1/6 xxl:basis-1/7">
+                                                            <ListItemThumb item={found} />
+                                                        </CarouselItem>);
+                                                    })}
+                                                </CarouselContent>
+                                                <div className="flex justify-between absolute top-[-27px] right-2 w-[45px]">
+
+                                                    <CarouselPrevious className="disabled:opacity-50 disabled:pointer-events-none hover:scale-105 transition-all duration-300 hover:bg-secondary hover:border-primary/50" />
+                                                    <CarouselNext className="disabled:opacity-50 disabled:pointer-events-none hover:scale-105 transition-all duration-300 hover:bg-secondary hover:border-primary/50" />
+                                                </div>
+                                            </Carousel>
+                                        </div>
                                     </div>
                                 ))}
                         </div>
                     </div>
                 ))}
-            </main >
+            </section >
         </div >
     );
 }

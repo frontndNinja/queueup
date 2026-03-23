@@ -22,7 +22,7 @@ export default function ListItem({ item, singleItem }: { item: Item; singleItem?
 
     return (
         <Link href={`/dashboard/item/${item.id}`} key={item.title}>
-            <div className="flex gap-4" key={item.title}>
+            <div className="flex gap-4" key={item.id}>
                 <div className={`${!singleItem && "basis-1/2 sm:basis-1/3"} w-[${singleItem ? 300 : 94}px] h-[${singleItem ? 450 : 141}px]`}>
 
                     <Image src={singleItem ? item.posterUrl : item.posterUrlThumbnail} alt={item.title} width={singleItem ? 300 : 94} height={singleItem ? 450 : 141} className="object-fit w-full h-full" />

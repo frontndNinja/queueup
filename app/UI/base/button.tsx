@@ -1,30 +1,64 @@
 "use client";
+
 import { useRouter } from "next/navigation";
+import type { LucideIcon } from "lucide-react";
+import {
+    Edit2Icon,
+    LogOutIcon,
+    UserIcon,
+    User2Icon,
+    LogInIcon,
+    PlusIcon,
+} from "lucide-react";
+
+type IconName =
+    | "Edit2Icon"
+    | "LogOutIcon"
+    | "UserIcon"
+    | "User2Icon"
+    | "LogInIcon"
+    | "PlusIcon";
+
+const iconMap: Record<IconName, LucideIcon> = {
+    Edit2Icon,
+    LogOutIcon,
+    UserIcon,
+    User2Icon,
+    LogInIcon,
+    PlusIcon,
+};
+
 export default function Button({
     text,
     action,
     goTo,
+    icon,
 }: {
     text: string;
     action?: () => void;
     goTo?: string;
+    icon?: IconName;
 }) {
     const router = useRouter();
+    const IconComponent = icon ? iconMap[icon] : null;
+
     const handleClick = () => {
         if (goTo) {
             router.push(goTo);
             return;
         }
-        if (action) {
-            action();
-        }
+        action?.();
     };
+
     return (
         <button
             onClick={handleClick}
-            className="flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="flex items-center justify-end group gap-3 hover:bg-primary/10 rounded-md p-2 w-full cursor-pointer"
         >
-            {text}
+            <p className="text-sm text-gray-500 group-hover:text-white">{text}</p>
+            {IconComponent ? (
+                <IconComponent className="w-[16px] h-[16px] group-hover:text-primary" />
+            ) : null}
         </button>
     );
 }
