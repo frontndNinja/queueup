@@ -24,6 +24,7 @@ export interface User {
     name: string;
     email: string;
     image: string;
+    queueIds: string[];
 }
 
 export interface Queue {

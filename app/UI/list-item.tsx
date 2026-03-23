@@ -23,7 +23,10 @@ export default function ListItem({ item, singleItem }: { item: Item; singleItem?
     return (
         <Link href={`/dashboard/item/${item.id}`} key={item.title}>
             <div className="flex gap-4" key={item.title}>
-                <Image src={singleItem ? item.posterUrl : item.posterUrlThumbnail} alt={item.title} width={singleItem ? 300 : 100} height={singleItem ? 500 : 100} />
+                <div className={`${!singleItem && "basis-1/2 sm:basis-1/3"} w-[${singleItem ? 300 : 94}px] h-[${singleItem ? 450 : 141}px]`}>
+
+                    <Image src={singleItem ? item.posterUrl : item.posterUrlThumbnail} alt={item.title} width={singleItem ? 300 : 94} height={singleItem ? 450 : 141} className="object-fit w-full h-full" />
+                </div>
                 <div>
                     <div className="flex items-center gap-2 mb-2">
                         <Pill text={item.type} color={`${item.type === "movie" ? "purple" : "blue"}`} />
@@ -33,7 +36,7 @@ export default function ListItem({ item, singleItem }: { item: Item; singleItem?
                                 "green"}`} />
                     </div>
                     <div className="flex flex-col gap-2">
-                        <p className="text-lg font-bold">{item.title}</p>
+                        <h3 className="sm:text-sm-h3">{item.title}</h3>
                         <p className={`text-sm text-gray-500 max-w-md ${singleItem ? "line-clamp-none" : "line-clamp-3"}`}>{item.description}</p>
                         {singleItem && (
                             <div className="flex items-center gap-2">

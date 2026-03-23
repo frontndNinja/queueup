@@ -14,11 +14,11 @@ export const authOptions: NextAuthOptions = {
     session: { strategy: "jwt" },
     callbacks: {
         async jwt({ token, user }) {
-            if (user?.id) (token as any).userId = user.id;
+            if (user?.id) (token.userId as string) = user.id as string;
             return token;
         },
         async session({ session, token }) {
-            if (session.user) (session.user as any).id = (token as any).userId;
+            if (session.user) (session.user.id as string) = token.userId as string;
             return session;
         },
         async redirect({ url, baseUrl }) {
