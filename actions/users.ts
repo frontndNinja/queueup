@@ -16,7 +16,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function getMember() {
+export async function getUser() {
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
     if (!userId) return null;
@@ -40,8 +40,8 @@ export async function getMember() {
     };
 }
 
-
-export async function getAllMembers() {
+//TODO: Needed??
+export async function getAllUsers() {
     const members = await prisma.user.findMany({
         select: {
             id: true,

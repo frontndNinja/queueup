@@ -1,6 +1,5 @@
-import { User, Queue, Item } from "@/app/definitions/definitions";
 
-export const items: Item[] = [{
+export const items = [{
     title: "The Lord of the Rings: The Return of the King",
     description: "The Lord of the Rings: The Return of the King is a movie about a man who is a wizard and he is trying to save the world from the evil.",
     createdAt: new Date('2026-03-19T12:00:00Z').toISOString(),
@@ -58,7 +57,7 @@ export const items: Item[] = [{
 
 
 
-export const users: User[] = [{
+export const users = [{
     id: "cmmyob0mu00009ketg0gpdp64",
     name: "Lisa Søndergaard",
     email: "iam@frontnd.ninja",
@@ -108,7 +107,7 @@ export const users: User[] = [{
 }];
 
 
-export const queues: Queue[] = [{
+export const queues = [{
 
     id: "92378e0d9029wiu",
     title: "Sjove film",

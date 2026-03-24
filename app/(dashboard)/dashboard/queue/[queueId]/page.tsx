@@ -1,7 +1,8 @@
 //Enkelt queue -> (queue detail: entries, filters, pick) import { Metadata } from 'next';
 import { Metadata } from 'next';
-import { queues, items } from '@/lib/dummyData';
 import ListItem from '@/app/UI/list-item';
+import { getQueueById } from '@/actions/queues';
+import { EntryWithRelations } from '@/app/definitions/definitions';
 
 
 export const metadata: Metadata = {
@@ -15,28 +16,25 @@ export default async function QueuePage({
 }) {
 
     const { queueId } = await params;
+    const queue = await getQueueById(queueId);
 
-    //TODO: Get queues from the database (use API)
+
+    if (!queue) {
+        return <div>Queue not found or access denied.</div>;
+    }
 
     return (
         <>
-            {queues
-                .filter((queue) => queue.id === queueId)
-                .map((queue) => (
-                    <div key={queue.id}>
-                        <div className="text-2xl font-bold">{queue.title}</div>
-                        <div className="flex flex-col gap-4">
-                            {queue.items.map((itemId) => {
-                                const item = items.find((item) => item.id === itemId);
-                                if (!item) return <p key={itemId}>{itemId}</p>;
-
-                                return (
-                                    <ListItem key={item.id} item={item} />
-                                );
-                            })}
-                        </div>
-                    </div>
-                ))}
+            <div key={queue[0].id} className="p-4">
+                <div className="text-2xl font-bold">{queue[0].name}</div>
+                <div className="flex flex-col gap-4">
+                    {queue[0].entries.map((entry) => {
+                        return (
+                            <ListItem key={entry.id} item={entry} />
+                        );
+                    })}
+                </div>
+            </div>
         </>
     );
 }

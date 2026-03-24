@@ -42,7 +42,6 @@ export default function TopNavigation({ user }: { user: User | null; }) {
                     <ClickAwayListener onClickAway={handleClickAway}>
                         <nav className={`${isProfileOpen ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-[-1]"} absolute top-13 right-0 w-[150px] rounded-b-md shadow-md p-2 pt-4 bg-lighter-background transition-all duration-300`} onClick={() => setIsProfileOpen(!isProfileOpen)}>
                             <div className="flex flex-col justify-start items-start gap-4">
-                                <Button text="Edit profile" icon="Edit2Icon" goTo={'/profile'} />
                                 <Button text="Dashboard" icon="LayoutDashboardIcon" goTo={'/dashboard'} />
                                 {user && (
                                     <div className="flex items-center justify-end group hover:bg-primary/10 rounded-md p-2 w-full cursor-pointer" onClick={() => router.push('/profile')}>
