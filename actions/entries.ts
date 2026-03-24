@@ -119,6 +119,9 @@ export async function createEntry(
 }
 
 
+//!NEXT: Add view for quick actions (like, superlike, dislike) og priority (low, medium, high)
+//TODO: make sure the action is connected and works with updating the entry
+
 const VOTE_VALUES: VoteValue[] = ["LIKE", "SUPERLIKE", "DISLIKE"];
 
 function parseVoteValue(v: string): VoteValue | null {

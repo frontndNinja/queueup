@@ -17,7 +17,7 @@ export default async function ItemsPage({
     const { itemId } = await params;
     const item = await getEntryById(itemId);
 
-    updateVote(itemId, 1);
+    /*  updateVote(itemId, 1); */
 
     if (!item) {
         return <div>Item not found or access denied.</div>;
