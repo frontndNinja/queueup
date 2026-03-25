@@ -4,7 +4,12 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "./users";
 import type { NewItemFields } from "@/app/definitions/definitions";
-import type { VoteValue } from "@prisma/client";
+import type { VoteValue, EntryPriority, EntryStatus } from "@prisma/client";
+import { calcVoteScore } from "@/lib/votes";
+
+/* ################################# */
+/* ######### QUERY ENTRIES ######### */
+/* ################################# */
 
 export async function getQueueEntries(queueId: string) {
     const user = await getUser();
@@ -41,18 +46,19 @@ export async function getQueueEntries(queueId: string) {
     });
 }
 
+/* ################################# */
+/* ######### SINGLE ENTRY ########## */
+/* ################################# */
+
 export async function getEntryById(entryId: string) {
     const user = await getUser();
     if (!user) return null;
 
-    return prisma.entry.findFirst({
+    const entry = await prisma.entry.findFirst({
         where: {
             id: entryId,
             queue: {
-                OR: [
-                    { ownerId: user.id },
-                    { members: { some: { userId: user.id } } },
-                ],
+                OR: [{ ownerId: user.id }, { members: { some: { userId: user.id } } }],
             },
         },
         include: {
@@ -60,11 +66,21 @@ export async function getEntryById(entryId: string) {
             queue: { select: { id: true, name: true } },
         },
     });
+
+    if (!entry) return null;
+
+    const voteScore = calcVoteScore(entry.votes);
+    return { ...entry, voteScore };
 }
 
 export type CreateEntryResult =
     | { ok: true; }
     | { ok: false; error: string; };
+
+
+/* ################################# */
+/* ####### CREATE NEW ENTRY ######## */
+/* ################################# */
 
 export async function createEntry(
     queueId: string,
@@ -118,9 +134,9 @@ export async function createEntry(
     return { ok: true };
 }
 
-
-//!NEXT: Add view for quick actions (like, superlike, dislike) og priority (low, medium, high)
-//TODO: make sure the action is connected and works with updating the entry
+/* ################################# */
+/* ######### UPDATE VOTE ########### */
+/* ################################# */
 
 const VOTE_VALUES: VoteValue[] = ["LIKE", "SUPERLIKE", "DISLIKE"];
 
@@ -128,11 +144,18 @@ function parseVoteValue(v: string): VoteValue | null {
     return VOTE_VALUES.includes(v as VoteValue) ? (v as VoteValue) : null;
 }
 
+function voteWeight(v: VoteValue): number {
+    if (v === "LIKE") return 1;
+    if (v === "SUPERLIKE") return 3;
+    return -1; // DISLIKE
+}
+
 export async function updateVote(entryId: string, vote: string) {
     const user = await getUser();
     if (!user) return null;
 
     const nextValue = parseVoteValue(vote);
+    console.log("nextValue", nextValue);
     if (!nextValue) return null;
 
     const entry = await prisma.entry.findFirst({
@@ -149,20 +172,124 @@ export async function updateVote(entryId: string, vote: string) {
     });
     if (!entry) return null;
 
-    return prisma.entryVote.upsert({
+    return prisma.$transaction(async (tx) => {
+        const existing = await tx.entryVote.findUnique({
+            where: {
+                entryId_userId: {
+                    entryId: entry.id,
+                    userId: user.id,
+                },
+            },
+            select: { value: true },
+        });
+
+        const oldWeight = existing ? voteWeight(existing.value) : 0;
+        const newWeight = voteWeight(nextValue);
+        const delta = newWeight - oldWeight;
+
+        if (existing?.value === nextValue) {
+            await tx.entryVote.delete({
+                where: {
+                    entryId_userId: {
+                        entryId: entry.id,
+                        userId: user.id,
+                    },
+                },
+            });
+            await tx.entry.update({
+                where: { id: entry.id },
+                data: { voteScore: { increment: -oldWeight } },
+            });
+            return { undone: true };
+        }
+        else {
+            const voteRow = await tx.entryVote.upsert({
+                where: {
+                    entryId_userId: {
+                        entryId: entry.id,
+                        userId: user.id,
+                    },
+                },
+                create: {
+                    entryId: entry.id,
+                    userId: user.id,
+                    value: nextValue,
+                },
+                update: {
+                    value: nextValue,
+                },
+            });
+
+            await tx.entry.update({
+                where: { id: entry.id },
+                data: { voteScore: { increment: delta } },
+            });
+
+            return voteRow;
+        }
+    });
+}
+
+/* ################################# */
+/* ######### UPDATE PRIORITY ####### */
+/* ################################# */
+
+const parsePriority = (v: string): EntryPriority | null => {
+    if (v === "LOW") return "LOW";
+    if (v === "MEDIUM") return "MEDIUM";
+    if (v === "HIGH") return "HIGH";
+    return null;
+};
+export async function updatePriority(entryId: string, priority: string) {
+    const user = await getUser();
+    if (!user) return null;
+
+    const nextPriority = parsePriority(priority);
+    if (!nextPriority) return null;
+
+    // Optional but recommended: enforce access (owner/member) like you do elsewhere
+    return prisma.entry.updateMany({
         where: {
-            entryId_userId: {
-                entryId: entry.id,
-                userId: user.id,
+            id: entryId,
+            queue: {
+                OR: [
+                    { ownerId: user.id },
+                    { members: { some: { userId: user.id } } },
+                ],
             },
         },
-        create: {
-            entryId: entry.id,
-            userId: user.id,
-            value: nextValue,
+        data: { priority: nextPriority },
+    });
+}
+
+/* ################################# */
+/* ######### UPDATE STATUS ######### */
+/* ################################# */
+
+const parseStatus = (v: string): EntryStatus | null => {
+    if (v === "PLANNED") return "PLANNED";
+    if (v === "WATCHED") return "WATCHED";
+    if (v === "SKIPPED") return "SKIPPED";
+    return null;
+};
+export async function updateStatus(entryId: string, status: string) {
+    const user = await getUser();
+    if (!user) return null;
+
+    const nextStatus = parseStatus(status);
+    if (!nextStatus) return null;
+
+    // Optional but recommended: enforce access (owner/member) like you do elsewhere
+    return prisma.entry.updateMany({
+        where: {
+            id: entryId,
+            queue: {
+                OR: [
+                    { ownerId: user.id },
+                    { members: { some: { userId: user.id } } },
+                ],
+            },
         },
-        update: {
-            value: nextValue,
-        },
+        data: { status: nextStatus },
     });
 }

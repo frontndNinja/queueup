@@ -24,6 +24,9 @@ export interface EntryWithRelations extends Item {
     queue: EntryQueueDTO;
     votes: EntryVoteDTO[];
 }
+export interface EntryWithRelationsAndVotes extends EntryWithRelations {
+    voteScore: number;
+}
 
 /** Fields supplied when creating an entry (`queueId` / `addedByUserId` / ids / timestamps are set server-side). */
 export type NewItemFields = Omit<
@@ -67,27 +70,3 @@ export interface EntryQueueDTO {
     name: string;
 }
 
-/* export interface EntryWithRelations {
-    id: string;
-    queueId: string;
-    addedByUserId: string;
-    title: string;
-    type: "MOVIE" | "SERIES";
-    status: "PLANNED" | "WATCHED" | "SKIPPED";
-    priority: "LOW" | "MEDIUM" | "HIGH";
-    releaseYear: number | null;
-    runtimeMinutes: number | null;
-    whereToWatch: string | null;
-    notes: string | null;
-    tags: string[];
-    source: "MANUAL" | "TMDB";
-    tmdbId: number | null;
-    imdbId: string | null;
-    posterUrl: string | null;
-    posterUrlThumbnail: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-    queue: EntryQueueDTO;
-    votes: EntryVoteDTO[];
-    description?: string | null;
-} */

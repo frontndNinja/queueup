@@ -115,6 +115,9 @@
   --color-secondary-foreground: var(--color-text-primary);
   --color-accent: var(--color-accent-cyan);
   --color-accent-foreground: #041015;
+  --color-pill-red: var(--color-pill-red);
+  --color-pill-green: var(--color-pill-green);
+  --color-pill-blue: var(--color-pill-blue);
 
   --breakpoint-xxs: 20rem;
   /* 320px */
@@ -176,6 +179,11 @@
   --color-cta-orange: #FF7A1A;
   --color-accent-cyan: #22D3EE;
   --color-accent-lime: #84CC16;
+
+  --color-pill-red: #fc3939;
+  --color-pill-green: #21de66;
+  --color-pill-blue: #1c81fd;
+
 }
 
 .dark {

@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { getUser } from "./users";
 import { User } from "@/app/definitions/definitions";
+import { calcVoteScore } from "@/lib/votes";
+
 
 export async function getMemberQueues() {
     const user = await getUser() as User;
@@ -45,16 +47,48 @@ export async function getOwnedQueues() {
 }
 
 export async function getQueueById(queueId: string) {
-    const user = await getUser() as User;
+    const user = (await getUser()) as User;
     if (!user) return null;
-
-    const queues = await prisma.queue.findMany({
+    // Optional but recommended: enforce membership/ownership like your other queries
+    const allowed = await prisma.queue.findFirst({
         where: {
             id: queueId,
+            OR: [
+                { ownerId: user.id },
+                { members: { some: { userId: user.id } } },
+            ],
         },
+        select: { id: true },
+    });
+    if (!allowed) return null;
+    const queues = await prisma.queue.findMany({
+        where: { id: queueId },
         include: {
-            entries: true,
+            entries: {
+                include: {
+                    votes: { select: { value: true } },
+                },
+            },
         },
     });
-    return queues;
+    const priorityRank: Record<"HIGH" | "MEDIUM" | "LOW", number> = {
+        HIGH: 0,
+        MEDIUM: 1,
+        LOW: 2,
+    };
+
+    return queues.map((q) => {
+        const entriesWithScore = q.entries.map((e) => ({
+            ...e,
+            voteScore: calcVoteScore(e.votes),
+        }));
+        entriesWithScore.sort((a, b) => {
+            /* const prio = priorityRank[a.priority] - priorityRank[b.priority];
+            if (prio !== 0) return prio; */
+            const score = b.voteScore - a.voteScore;
+            if (score !== 0) return score;
+            return b.createdAt.getTime() - a.createdAt.getTime();
+        });
+        return { ...q, entries: entriesWithScore };
+    });
 }
