@@ -10,7 +10,7 @@ import ClickAwayListener from 'react-click-away-listener';
 
 
 
-export default function TopNavigation({ user }: { user: User | null; }) {
+export default function TopNavigation({ user, invites }: { user: User | null; invites: number; }) {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const router = useRouter();
     const handleClickAway = () => {
@@ -43,6 +43,11 @@ export default function TopNavigation({ user }: { user: User | null; }) {
                         <nav className={`${isProfileOpen ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-[-1]"} absolute top-13 right-0 w-[150px] rounded-b-md shadow-md p-2 pt-4 bg-lighter-background transition-all duration-300`} onClick={() => setIsProfileOpen(!isProfileOpen)}>
                             <div className="flex flex-col justify-start items-start gap-4">
                                 <Button text="Dashboard" icon="LayoutDashboardIcon" goTo={'/dashboard'} />
+                                <div className="relative flex flex-col items-center justify-end group gap-3 hover:bg-primary/10 rounded-md w-full">
+                                    <div className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{invites}</div>
+                                    <Button text="Invites" icon="MailIcon" goTo={'/dashboard/invites'} />
+                                </div>
+                                <Button text="Add Queue" icon="TicketPlusIcon" goTo={'/dashboard/add-queue'} />
                                 {user && (
                                     <div className="flex items-center justify-end group hover:bg-primary/10 rounded-md p-2 w-full cursor-pointer" onClick={() => router.push('/profile')}>
                                         <SignOutButton colorIcon="group-hover:text-primary" colorText="group-hover:text-white" />

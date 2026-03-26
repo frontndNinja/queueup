@@ -39,7 +39,7 @@ export default function ListItem({ item, singleItem, allOptions, currentUserId }
     };
 
     const list = (
-        <div className="md:flex gap-8 items-center p-4 max-w-[900px] mx-auto">
+        <div className="md:flex gap-8 items-center py-4 max-w-[900px] mx-auto">
             <div className={`${!singleItem ? "w-[120px] h-[180px]" : "w-full md:w-[40vw] max-w-[400px] aspect-9/14 mb-6 md:mb-0 mx-auto md:mx-0"}`}>
                 <Image src={poster} alt={item.title} width={singleItem ? 400 : 120} height={singleItem ? 600 : 180} className="object-cover w-full h-full" />
             </div>

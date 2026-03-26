@@ -23,7 +23,11 @@ import {
     MonitorCheckIcon,
     MonitorDownIcon,
     OctagonXIcon,
-    CirclePlusIcon
+    CirclePlusIcon,
+    CheckIcon,
+    XIcon,
+    MailIcon,
+    TicketPlusIcon
 } from "lucide-react";
 
 const iconMap: Record<IconName, LucideIcon> = {
@@ -44,7 +48,11 @@ const iconMap: Record<IconName, LucideIcon> = {
     MonitorCheckIcon,
     MonitorDownIcon,
     OctagonXIcon,
-    CirclePlusIcon
+    CirclePlusIcon,
+    CheckIcon,
+    XIcon,
+    MailIcon,
+    TicketPlusIcon
 };
 
 export default function Button({

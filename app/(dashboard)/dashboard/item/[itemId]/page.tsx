@@ -5,6 +5,7 @@ import { getEntryById } from '@/actions/entries';
 import type { QuickAction } from "@/app/definitions/small-definitions";
 import { EntryWithRelationsAndVotes } from '@/app/definitions/definitions'; import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import Breadcrumb from '@/app/UI/breadcrumb';
 
 export const metadata: Metadata = {
     title: "Item",
@@ -53,9 +54,11 @@ export default async function ItemsPage({
     };
 
     const allOptions: QuickAction[] = [voteOptions, priorityOptions, statusOptions];
-
+    console.log(item);
     return (
         <div>
+            <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: item.queue.name, href: "/dashboard/queue/" + item.queue.id }, { label: item.title, href: "/dashboard/item/" + item.id }]} />
+
             <ListItem key={item.id} item={item} singleItem={true} allOptions={allOptions} currentUserId={sessionUser?.id ?? ""} />
         </div>
     );

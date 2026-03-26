@@ -16,7 +16,11 @@ export type IconName =
     | "MonitorCheckIcon"
     | "MonitorDownIcon"
     | "OctagonXIcon"
-    | "CirclePlusIcon";
+    | "CirclePlusIcon"
+    | "CheckIcon"
+    | "XIcon"
+    | "MailIcon"
+    | "TicketPlusIcon";
 
 
 export type PillIconName =

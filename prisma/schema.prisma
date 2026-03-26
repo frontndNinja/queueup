@@ -26,6 +26,10 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  invitesReceived QueueInvite[] @relation("QueueInvitedUser")
+  invitesSent     QueueInvite[] @relation("QueueInvitedBy")
+  queueInvites    QueueInvite[]
 }
 
 model Account {
@@ -77,6 +81,7 @@ model Queue {
   owner   User          @relation("QueueOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   members QueueMember[]
   entries Entry[]
+  invites QueueInvite[]
 
   @@index([ownerId])
 }
@@ -93,6 +98,24 @@ model QueueMember {
 
   @@unique([queueId, userId])
   @@index([userId])
+}
+
+model QueueInvite {
+  id            String            @id @default(cuid())
+  queueId       String
+  invitedUserId String
+  invitedById   String
+  status        QueueInviteStatus @default(PENDING)
+  createdAt     DateTime          @default(now())
+  respondedAt   DateTime?
+  queue         Queue             @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  invitedUser   User              @relation("QueueInvitedUser", fields: [invitedUserId], references: [id], onDelete: Cascade)
+  invitedBy     User              @relation("QueueInvitedBy", fields: [invitedById], references: [id], onDelete: Cascade)
+  user          User?             @relation(fields: [userId], references: [id])
+  userId        String?
+
+  @@unique([queueId, invitedUserId])
+  @@index([invitedUserId, status])
 }
 
 model Entry {
@@ -176,4 +199,11 @@ enum VoteValue {
   LIKE
   SUPERLIKE
   DISLIKE
+}
+
+enum QueueInviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELLED
 }

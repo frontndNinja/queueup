@@ -24,6 +24,37 @@ function parseIntOrNull(raw: string): number | null {
     return Number.isFinite(n) ? n : null;
 }
 
+function validatePayload(p: NewItemFields): string | null {
+    const title = p.title.trim();
+    if (!title) return "Title is required.";
+
+    for (const [label, url] of [
+        ["Poster URL", p.posterUrl],
+        ["Poster thumbnail URL", p.posterUrlThumbnail],
+    ] as const) {
+        if (url && url.trim()) {
+            try {
+                new URL(url);
+            } catch {
+                return `${label} must be a valid URL.`;
+            }
+        }
+    }
+
+    if (p.source === "TMDB" && (p.tmdbId == null || !Number.isFinite(p.tmdbId))) {
+        return "TMDB ID is required when Source is TMDB.";
+    }
+
+    if (p.releaseYear != null && (p.releaseYear < 1800 || p.releaseYear > 2100)) {
+        return "Release year must be between 1800 and 2100.";
+    }
+    if (p.runtimeMinutes != null && (p.runtimeMinutes < 1 || p.runtimeMinutes > 2000)) {
+        return "Runtime minutes must be between 1 and 2000.";
+    }
+
+    return null;
+}
+
 export function AddItemForm({ queueId }: { queueId: string; }) {
     const router = useRouter();
     const [pending, startTransition] = useTransition();
@@ -53,6 +84,13 @@ export function AddItemForm({ queueId }: { queueId: string; }) {
                 String(fd.get("posterUrlThumbnail") ?? "").trim() || null,
         };
 
+        payload.title = payload.title.trim();
+        const validationError = validatePayload(payload);
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
+
         startTransition(async () => {
             const result = await createEntry(queueId, payload);
             if (result.ok) {
@@ -80,6 +118,7 @@ export function AddItemForm({ queueId }: { queueId: string; }) {
                     id="title"
                     name="title"
                     required
+                    minLength={1}
                     className={inputClass}
                     placeholder="Title"
                 />
@@ -169,7 +208,10 @@ export function AddItemForm({ queueId }: { queueId: string; }) {
                         type="number"
                         className={inputClass}
                         placeholder="e.g. 2024"
+                        min={1800}
+                        max={2100}
                     />
+
                 </div>
                 <div>
                     <label htmlFor="runtimeMinutes" className="text-sm font-medium">
@@ -180,6 +222,8 @@ export function AddItemForm({ queueId }: { queueId: string; }) {
                         name="runtimeMinutes"
                         type="number"
                         className={inputClass}
+                        min={1}
+                        max={2000}
                     />
                 </div>
             </div>

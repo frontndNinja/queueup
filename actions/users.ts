@@ -40,6 +40,19 @@ export async function getUser() {
     };
 }
 
+export async function getSpecificUser(userId: string) {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            name: true,
+        },
+    });
+
+    if (!user) return null;
+
+    return user;
+}
 //TODO: Needed??
 export async function getAllUsers() {
     const members = await prisma.user.findMany({

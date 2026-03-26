@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getQueueById } from "@/actions/queues";
 import { AddItemForm } from "@/app/UI/form-elements/add-item-form";
+import Breadcrumb from "@/app/UI/breadcrumb";
 
 export const metadata: Metadata = {
     title: "Add item",
@@ -22,9 +23,10 @@ export default async function AddItemPage({
     const queue = queues[0];
 
     return (
-        <div className="mx-auto max-w-2xl p-4">
+        <div>
+            <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: queue.name, href: "/dashboard/queue/" + queueId }, { label: "Add item", href: "/dashboard/queue/" + queueId + "/add-item" }]} />
             <div className="mb-6 flex items-center justify-between gap-4">
-                <h1 className="text-2xl font-bold">Add item</h1>
+                <h1 className="sm:text-lg-p1 py-4">Add item</h1>
                 <Link
                     href={`/dashboard/queue/${queueId}`}
                     className="text-sm text-muted-foreground underline-offset-4 hover:underline"
