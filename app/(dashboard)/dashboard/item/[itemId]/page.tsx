@@ -6,6 +6,9 @@ import type { QuickAction } from "@/app/definitions/small-definitions";
 import { EntryWithRelationsAndVotes } from '@/app/definitions/definitions'; import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import Breadcrumb from '@/app/UI/breadcrumb';
+import { getTMDBMovieDetails, getTMDBSeriesDetails } from '@/actions/tmdbAPI';
+import { TMDBItem } from '@/app/definitions/definitions';
+import { tmdbData } from '@/lib/tmdb-data';
 
 export const metadata: Metadata = {
     title: "Item",
@@ -13,19 +16,38 @@ export const metadata: Metadata = {
 
 export default async function ItemsPage({
     params,
+    searchParams,
 }: {
-    params: { itemId: string; };
+    params: Promise<{ itemId: string; }>;
+    searchParams: Promise<{ type?: string; q?: string; }>;
 }) {
-
-    const { itemId } = await params;
-    const item = await getEntryById(itemId) as EntryWithRelationsAndVotes;
     const session = await getServerSession(authOptions);
     const sessionUser = session?.user;
 
-    if (!item) {
-        return <div>Item not found or access denied.</div>;
-    }
+    const { itemId } = await params;
+    const { type, q } = await searchParams;
 
+    const item = await getEntryById(itemId) as EntryWithRelationsAndVotes;
+
+    let movieItem;
+    let seriesItem;
+
+    if (type === "series") {
+        seriesItem = await getTMDBSeriesDetails(itemId) as TMDBItem;
+    } else {
+        movieItem = await getTMDBMovieDetails(itemId) as TMDBItem;
+    }
+    const itemToShow = type === "series" ? seriesItem : movieItem;
+    let restructuredItem;
+    console.log("itemToShow", itemToShow);
+    if (!item) {
+        if (itemToShow) {
+            restructuredItem = tmdbData(itemToShow, type ?? "");
+        } else {
+            return <div>Item not found or access denied.</div>;
+        }
+    }
+    console.log("after restructure", item ?? restructuredItem);
     const voteOptions: QuickAction = {
         title: "Vote",
         options: [
@@ -54,12 +76,16 @@ export default async function ItemsPage({
     };
 
     const allOptions: QuickAction[] = [voteOptions, priorityOptions, statusOptions];
-    console.log(item);
     return (
         <div>
-            <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: item.queue.name, href: "/dashboard/queue/" + item.queue.id }, { label: item.title, href: "/dashboard/item/" + item.id }]} />
+            {!item ?
+                (
+                    <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: "TMBD", href: `/dashboard/tmdb?q=${q}` }, { label: restructuredItem?.title || "", href: "/dashboard/item/" + restructuredItem?.id }]} />
+                ) : (
+                    <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: item.queue.name, href: "/dashboard/queue/" + item.queue.id }, { label: item.title, href: "/dashboard/item/" + item.id }]} />
+                )}
 
-            <ListItem key={item.id} item={item} singleItem={true} allOptions={allOptions} currentUserId={sessionUser?.id ?? ""} />
+            <ListItem key={item ? item.id : restructuredItem?.id} item={item ?? restructuredItem} singleItem={true} allOptions={allOptions} currentUserId={sessionUser?.id ?? ""} />
         </div>
     );
 }

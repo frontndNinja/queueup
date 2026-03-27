@@ -6,6 +6,7 @@ import { getUser } from "@/actions/users";
 import { getMemberQueues } from "@/actions/queues";
 import { TicketPlusIcon } from "lucide-react";
 
+
 import ListItemThumb from "@/app/UI/list-item-thumb";
 import {
     Carousel,

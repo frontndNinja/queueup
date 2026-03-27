@@ -37,7 +37,6 @@ export default function ListItem({ item, singleItem, allOptions, currentUserId }
     const formatText = (text: string) => {
         return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
     };
-
     const list = (
         <div className="md:flex gap-8 items-center py-4 max-w-[900px] mx-auto">
             <div className={`${!singleItem ? "w-[120px] h-[180px]" : "w-full md:w-[40vw] max-w-[400px] aspect-9/14 mb-6 md:mb-0 mx-auto md:mx-0"}`}>
@@ -53,7 +52,7 @@ export default function ListItem({ item, singleItem, allOptions, currentUserId }
                         <Pill text={formatText(item.status)} color={statusColor} icon={statusIcon} />
                         <Pill text={formatText(item.priority)} color={priorityColor} icon={priorityIcon} />
                         <Pill text={item.voteScore.toString()} color="primary" icon="StarIcon" />
-                        {singleItem && (
+                        {singleItem && item.queueId !== "0" && (
                             <div className="relative ml-3 rounded-full hover:border border-primary/50 hover:bg-primary/10 w-[30px] h-[30px] flex items-center justify-center">
                                 <QuickActions allOptions={allOptions} item={item} currentUserId={currentUserId} />
                             </div>
@@ -73,7 +72,7 @@ export default function ListItem({ item, singleItem, allOptions, currentUserId }
     );
 
     return (
-        !singleItem ? <Link href={`/dashboard/item/${item.id}`} key={item.title}>
+        !singleItem ? <Link href={`/dashboard/item/${item.id}?type=${item.type.toLowerCase()}`} key={item.title}>
             {list}
         </Link> : (
             <div className="flex">

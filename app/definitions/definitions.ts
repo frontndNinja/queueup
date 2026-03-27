@@ -1,22 +1,22 @@
 export interface Item {
-    id: string;
+    id: string; //V
+    title: string; //V
+    description?: string | null; //V
+    type: "MOVIE" | "SERIES"; //V
+    releaseYear: number | null; // V
+    tags: string[]; //V
+    posterUrl: string | null; //V
+    posterUrlThumbnail: string | null; //V
+    tmdbId: number | null; //V
+    runtimeMinutes: number | null; //‰
     queueId: string;
     addedByUserId: string;
-    title: string;
-    description?: string | null;
-    type: "MOVIE" | "SERIES";
     status: "PLANNED" | "WATCHED" | "SKIPPED";
     priority: "LOW" | "MEDIUM" | "HIGH";
-    releaseYear: number | null;
-    runtimeMinutes: number | null;
     whereToWatch: string | null;
     notes: string | null;
-    tags: string[];
     source: "MANUAL" | "TMDB";
-    tmdbId: number | null;
     imdbId: string | null;
-    posterUrl: string | null;
-    posterUrlThumbnail: string | null;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -70,3 +70,26 @@ export interface EntryQueueDTO {
     name: string;
 }
 
+/* ############################ */
+/* ## TMDB API Definitions ## */
+/* ############################ */
+
+export interface TMDBItem {
+    id: number; //tmdbId + id
+    title: string; //title
+    name: string; //name
+    overview: string; //description
+    video: boolean; //type
+    release_date: string; //releaseYear
+    genre_ids: number[]; //tags
+    poster_path: string; //posterUrlThumbnail + posterUrl
+    adult: boolean;
+    backdrop_path: string;
+    origin_country: string[];
+    original_language: string;
+    original_name: string;
+    popularity: number;
+    first_air_date: string;
+    vote_average: number;
+    vote_count: number;
+}
