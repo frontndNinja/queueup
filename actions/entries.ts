@@ -293,3 +293,64 @@ export async function updateStatus(entryId: string, status: string) {
         data: { status: nextStatus },
     });
 }
+
+/* ############################################# */
+/* ######### CHECK IF ITEM IS IN QUEUE ######### */
+/* ############################################# */
+
+
+export async function getQueueTmdbIds(queueId: string): Promise<number[]> {
+    const user = await getUser();
+    if (!user) return [];
+
+    const allowed = await prisma.queue.findFirst({
+        where: {
+            id: queueId,
+            OR: [
+                { ownerId: user.id },
+                { members: { some: { userId: user.id } } },
+            ],
+        },
+        select: { id: true },
+    });
+    if (!allowed) return [];
+
+    const rows = await prisma.entry.findMany({
+        where: { queueId, tmdbId: { not: null } },
+        select: { tmdbId: true },
+    });
+
+    return rows
+        .map((r) => r.tmdbId)
+        .filter((v): v is number => typeof v === "number");
+}
+
+/* ################################## */
+/* ######### DELETE ENTRY ########### */
+/* ################################## */
+
+export async function deleteEntry(entryId: string, queueId: string) {
+    const user = await getUser();
+    if (!user) return null;
+
+    const allowed = await prisma.queue.findFirst({
+        where: {
+            id: queueId,
+            OR: [
+                { ownerId: user.id },
+                { members: { some: { userId: user.id } } },
+            ],
+        },
+        select: { id: true },
+    });
+    if (!allowed) return [];
+
+    const entry = await prisma.entry.findUnique({
+        where: { id: entryId, queue: { OR: [{ ownerId: user.id }, { members: { some: { userId: user.id } } }] } },
+    });
+    if (!entry) return null;
+
+    await prisma.entry.delete({ where: { id: entryId } });
+    revalidatePath(`/dashboard/queue/${entry.queueId}`);
+    return { ok: true as const, entryId: entryId };
+}

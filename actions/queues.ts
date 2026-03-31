@@ -69,10 +69,17 @@ export async function getQueueById(queueId: string) {
         include: {
             entries: {
                 include: {
-                    votes: { select: { value: true } },
+                    votes: {
+                        select: {
+                            id: true,
+                            entryId: true,
+                            userId: true,
+                            value: true,
+                        },
+                    }
                 },
             },
-        },
+        }
     });
     const priorityRank: Record<"HIGH" | "MEDIUM" | "LOW", number> = {
         HIGH: 0,

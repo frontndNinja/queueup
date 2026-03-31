@@ -25,7 +25,10 @@ import {
     CheckIcon,
     XIcon,
     MailIcon,
-    TicketPlusIcon
+    TicketPlusIcon,
+    FilePlusIcon,
+    PackagePlusIcon,
+    TrashIcon
 } from "lucide-react";
 
 const iconMap: Record<IconName, LucideIcon> = {
@@ -50,7 +53,10 @@ const iconMap: Record<IconName, LucideIcon> = {
     CheckIcon,
     XIcon,
     MailIcon,
-    TicketPlusIcon
+    TicketPlusIcon,
+    FilePlusIcon,
+    PackagePlusIcon,
+    TrashIcon
 };
 
 export function ActionButton({

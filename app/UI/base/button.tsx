@@ -27,7 +27,10 @@ import {
     CheckIcon,
     XIcon,
     MailIcon,
-    TicketPlusIcon
+    TicketPlusIcon,
+    FilePlusIcon,
+    PackagePlusIcon,
+    TrashIcon
 } from "lucide-react";
 
 const iconMap: Record<IconName, LucideIcon> = {
@@ -52,7 +55,10 @@ const iconMap: Record<IconName, LucideIcon> = {
     CheckIcon,
     XIcon,
     MailIcon,
-    TicketPlusIcon
+    TicketPlusIcon,
+    FilePlusIcon,
+    PackagePlusIcon,
+    TrashIcon
 };
 
 export default function Button({
@@ -61,12 +67,14 @@ export default function Button({
     goTo,
     icon,
     type,
+    disabled,
 }: {
     text?: string;
     action?: () => void;
     goTo?: string;
     icon?: IconName;
     type?: "button" | "icon";
+    disabled?: boolean;
 }) {
     const router = useRouter();
     const IconComponent = icon ? iconMap[icon] : null;
@@ -96,7 +104,7 @@ export default function Button({
             {content}
         </Link>
             :
-            <button onClick={handleClick} className={`flex items-center justify-end group gap-3 hover:bg-primary/10 rounded-md p-2 w-full cursor-pointer ${type === "icon" ? "w-fit" : "w-full"}`}
+            <button disabled={disabled} onClick={handleClick} className={`flex items-center justify-end group gap-3 hover:bg-primary/10 rounded-md p-2 w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${type === "icon" ? "w-fit" : "w-full"}`}
                 title={text}
             >
                 {content}

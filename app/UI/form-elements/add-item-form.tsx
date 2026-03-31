@@ -6,54 +6,10 @@ import { createEntry } from "@/actions/entries";
 import type { NewItemFields } from "@/app/definitions/definitions";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { buildNewItemFieldsFromFormData, validateNewItemFields } from "./add-item-form-helpers";
 
 const inputClass =
     "mt-1 block w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
-
-function parseTags(raw: string): string[] {
-    return raw
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean);
-}
-
-function parseIntOrNull(raw: string): number | null {
-    const t = raw.trim();
-    if (!t) return null;
-    const n = parseInt(t, 10);
-    return Number.isFinite(n) ? n : null;
-}
-
-function validatePayload(p: NewItemFields): string | null {
-    const title = p.title.trim();
-    if (!title) return "Title is required.";
-
-    for (const [label, url] of [
-        ["Poster URL", p.posterUrl],
-        ["Poster thumbnail URL", p.posterUrlThumbnail],
-    ] as const) {
-        if (url && url.trim()) {
-            try {
-                new URL(url);
-            } catch {
-                return `${label} must be a valid URL.`;
-            }
-        }
-    }
-
-    if (p.source === "TMDB" && (p.tmdbId == null || !Number.isFinite(p.tmdbId))) {
-        return "TMDB ID is required when Source is TMDB.";
-    }
-
-    if (p.releaseYear != null && (p.releaseYear < 1800 || p.releaseYear > 2100)) {
-        return "Release year must be between 1800 and 2100.";
-    }
-    if (p.runtimeMinutes != null && (p.runtimeMinutes < 1 || p.runtimeMinutes > 2000)) {
-        return "Runtime minutes must be between 1 and 2000.";
-    }
-
-    return null;
-}
 
 export function AddItemForm({ queueId }: { queueId: string; }) {
     const router = useRouter();
@@ -63,29 +19,13 @@ export function AddItemForm({ queueId }: { queueId: string; }) {
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setError(null);
+
         const fd = new FormData(e.currentTarget);
+        const payload = buildNewItemFieldsFromFormData(fd);
 
-        const payload: NewItemFields = {
-            title: String(fd.get("title") ?? ""),
-            description: String(fd.get("description") ?? "").trim() || null,
-            type: fd.get("type") as NewItemFields["type"],
-            status: fd.get("status") as NewItemFields["status"],
-            priority: fd.get("priority") as NewItemFields["priority"],
-            releaseYear: parseIntOrNull(String(fd.get("releaseYear") ?? "")),
-            runtimeMinutes: parseIntOrNull(String(fd.get("runtimeMinutes") ?? "")),
-            whereToWatch: String(fd.get("whereToWatch") ?? "").trim() || null,
-            notes: String(fd.get("notes") ?? "").trim() || null,
-            tags: parseTags(String(fd.get("tags") ?? "")),
-            source: fd.get("source") as NewItemFields["source"],
-            tmdbId: parseIntOrNull(String(fd.get("tmdbId") ?? "")),
-            imdbId: String(fd.get("imdbId") ?? "").trim() || null,
-            posterUrl: String(fd.get("posterUrl") ?? "").trim() || null,
-            posterUrlThumbnail:
-                String(fd.get("posterUrlThumbnail") ?? "").trim() || null,
-        };
+        const validationError = validateNewItemFields(payload);
+        if (validationError) { setError(validationError); return; }
 
-        payload.title = payload.title.trim();
-        const validationError = validatePayload(payload);
         if (validationError) {
             setError(validationError);
             return;

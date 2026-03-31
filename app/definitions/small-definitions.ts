@@ -20,7 +20,10 @@ export type IconName =
     | "CheckIcon"
     | "XIcon"
     | "MailIcon"
-    | "TicketPlusIcon";
+    | "TicketPlusIcon"
+    | "FilePlusIcon"
+    | "PackagePlusIcon"
+    | "TrashIcon";
 
 
 export type PillIconName =

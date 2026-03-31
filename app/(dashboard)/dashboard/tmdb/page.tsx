@@ -51,7 +51,7 @@ export default async function TMDBPage({
 
     return (
         <div>
-            <TMDBSearch />
+            <TMDBSearch searchUrl="/dashboard/tmdb" />
 
 
             <div className="flex flex-col gap-4">

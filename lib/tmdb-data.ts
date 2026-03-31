@@ -1,7 +1,6 @@
 import { TMDBItem } from "@/app/definitions/definitions";
 
 export function tmdbData(item: TMDBItem, type: string) {
-    console.log("pre restructured item", item);
     return {
         id: item.id.toString(),
         tmdbId: item.id,

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PencilIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import type { IconName, QuickAction } from "@/app/definitions/small-definitions";
+import type { IconName } from "@/app/definitions/small-definitions";
 import type { EntryWithRelationsAndVotes } from "@/app/definitions/definitions";
 import { updateVote } from "@/actions/entries";
 import { ActionButton } from "./action-buttons";
@@ -12,6 +12,7 @@ import { ActionButton } from "./action-buttons";
 import ClickAwayListener from "react-click-away-listener";
 
 import { updatePriority, updateStatus } from "@/actions/entries";
+import { allOptions } from "@/lib/quick-action-data";
 
 function toStatus(text: string): "PLANNED" | "WATCHED" | "SKIPPED" | null {
     if (text === "Plan to watch") return "PLANNED";
@@ -28,11 +29,9 @@ function toPriority(text: string): "LOW" | "MEDIUM" | "HIGH" | null {
 }
 
 export default function QuickActions({
-    allOptions,
     item,
     currentUserId,
 }: {
-    allOptions?: QuickAction[];
     item: EntryWithRelationsAndVotes;
     currentUserId: string;
 }) {
@@ -41,6 +40,8 @@ export default function QuickActions({
 
     const myVoteValue =
         item.votes.find((v) => v.userId === currentUserId)?.value ?? null;
+
+    console.log("myVoteValue", item, currentUserId, myVoteValue);
 
     const handleClickAway = () => {
         setIsOpen(false);

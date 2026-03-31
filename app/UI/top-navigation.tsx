@@ -40,8 +40,8 @@ export default function TopNavigation({ user, invites }: { user: User | null; in
 
                 <>
                     <ClickAwayListener onClickAway={handleClickAway}>
-                        <nav className={`${isProfileOpen ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-[-1]"} absolute top-13 right-0 w-[150px] rounded-b-md shadow-md p-2 pt-4 bg-lighter-background transition-all duration-300`} onClick={() => setIsProfileOpen(!isProfileOpen)}>
-                            <div className="flex flex-col justify-start items-start gap-4">
+                        <nav className={`${isProfileOpen ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-[-1]"} absolute top-13 right-0 w-[150px] rounded-b-md shadow-md p-2 pt-2 bg-lighter-background transition-all duration-300`} onClick={() => setIsProfileOpen(!isProfileOpen)}>
+                            <div className="flex flex-col justify-start items-start gap-2">
                                 <Button text="Dashboard" icon="LayoutDashboardIcon" goTo={'/dashboard'} />
                                 <div className="relative flex flex-col items-center justify-end group gap-3 hover:bg-primary/10 rounded-md w-full">
                                     <div className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{invites}</div>
