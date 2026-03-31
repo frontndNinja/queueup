@@ -82,7 +82,6 @@ export default function ListItem({ item, singleItem, currentUserId, addItem, alr
                     {singleItem && item.releaseDate && (
                         <p className={`text-sm w-full text-gray-400 md:max-w-md mb-4`}>Release Date: {new Date(item.releaseDate).toLocaleDateString()}</p>
                     )}
-                    <p className={`text-sm w-full text-gray-500 md:max-w-md ${singleItem ? "line-clamp-none" : "line-clamp-3"} mb-2`}>{item.description}</p>
                     {singleItem && !item.releaseDate && item.releaseYear && (
                         <p className={`text-sm w-full text-gray-400 md:max-w-md mb-4`}>Release year: {item.releaseYear}</p>
                     )}
