@@ -27,7 +27,6 @@ export default async function QueuePage({
     const { queueId } = await params;
     const { q } = await searchParams;
     const queue = await getQueueById(queueId);
-    console.log("queue", queue);
     let moviesAndSeries = await getTMDBMoviesAndSeries();
     const user = await getUser() as User;
     if (!user) return null;

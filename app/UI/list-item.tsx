@@ -20,6 +20,7 @@ export default function ListItem({ item, singleItem, currentUserId, addItem, alr
             hour12: false, // optional
         }).format(new Date(value));
 
+
     const hasText = (v: string | null | undefined): v is string =>
         typeof v === "string" && v.trim().length > 0;
 

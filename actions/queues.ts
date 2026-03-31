@@ -70,6 +70,7 @@ export async function getQueueById(queueId: string) {
         include: {
             entries: {
                 include: {
+                    queue: { select: { id: true, name: true } },
                     votes: {
                         select: {
                             id: true,

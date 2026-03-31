@@ -27,6 +27,8 @@ export interface EntryWithRelations extends Item {
 }
 export interface EntryWithRelationsAndVotes extends EntryWithRelations {
     voteScore: number;
+    voteCount?: number;
+    rankScore?: number;
 }
 
 /** Fields supplied when creating an entry (`queueId` / `addedByUserId` / ids / timestamps are set server-side). */
