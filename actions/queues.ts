@@ -5,6 +5,7 @@ import { getUser } from "./users";
 import { User } from "@/app/definitions/definitions";
 import { calcVoteScore } from "@/lib/votes";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 
 export async function getMemberQueues() {
@@ -239,9 +240,7 @@ export async function leaveQueue(queueId: string) {
     await prisma.queueMember.delete({
         where: { queueId_userId: { queueId: queueId, userId: user.id } },
     });
-
-    revalidatePath("/dashboard/queue/" + queueId);
-    revalidatePath("/dashboard/");
+    redirect("/dashboard");
     return { ok: true as const, queueId: queueId };
 }
 
@@ -308,6 +307,6 @@ export async function deleteQueue(queueId: string) {
     if (queueItem.ownerId !== user.id) return null;
 
     await prisma.queue.delete({ where: { id: queueId } });
-    revalidatePath("/dashboard");
+    redirect("/dashboard");
     return { ok: true as const, queueId: queueId };
 }
