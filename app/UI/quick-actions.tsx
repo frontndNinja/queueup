@@ -41,8 +41,6 @@ export default function QuickActions({
     const myVoteValue =
         item.votes.find((v) => v.userId === currentUserId)?.value ?? null;
 
-    console.log("myVoteValue", item, currentUserId, myVoteValue);
-
     const handleClickAway = () => {
         setIsOpen(false);
     };

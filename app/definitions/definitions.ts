@@ -4,6 +4,7 @@ export interface Item {
     description?: string | null; //V
     type: "MOVIE" | "SERIES"; //V
     releaseYear: number | null; // V
+    releaseDate: string | null; // V
     tags: string[]; //V
     posterUrl: string | null; //V
     posterUrlThumbnail: string | null; //V

@@ -45,7 +45,7 @@ export default async function DashboardPage() {
                         Welcome back to QueueUp, {user?.name ?? "friend"}!
                     </h1>
                     <div className="w-[30px] h-[30px]">
-                        <Link href={"/dashboard/queue/add-queue"} title="Add Item" className="w-full h-full hover:bg-primary/10 rounded-md flex items-center justify-center cursor-pointer">
+                        <Link href={"/dashboard/add-queue"} title="Add Item" className="w-full h-full hover:bg-primary/10 rounded-md flex items-center justify-center cursor-pointer">
                             <TicketPlusIcon />
                         </Link>
                     </div>

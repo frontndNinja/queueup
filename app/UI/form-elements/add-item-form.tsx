@@ -154,6 +154,19 @@ export function AddItemForm({ queueId }: { queueId: string; }) {
 
                 </div>
                 <div>
+                    <label htmlFor="releaseDate" className="text-sm font-medium">
+                        Release year
+                    </label>
+                    <input
+                        id="releaseDate"
+                        name="releaseDate"
+                        type="date"
+                        className={inputClass}
+                        placeholder="dd/mm/yyyy"
+                    />
+
+                </div>
+                <div>
                     <label htmlFor="runtimeMinutes" className="text-sm font-medium">
                         Runtime (minutes)
                     </label>

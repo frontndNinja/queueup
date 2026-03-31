@@ -27,7 +27,6 @@ export default async function ItemsPage({
     const { type, q } = await searchParams;
 
     const item = await getEntryById(itemId) as EntryWithRelationsAndVotes;
-
     let movieItem;
     let seriesItem;
 

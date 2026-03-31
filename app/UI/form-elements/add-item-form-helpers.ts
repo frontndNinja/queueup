@@ -22,6 +22,7 @@ export function buildNewItemFieldsFromFormData(fd: FormData): NewItemFields {
         status: fd.get("status") as NewItemFields["status"],
         priority: fd.get("priority") as NewItemFields["priority"],
         releaseYear: parseIntOrNull(String(fd.get("releaseYear") ?? "")),
+        releaseDate: String(fd.get("releaseDate") ?? "").trim() || null,
         runtimeMinutes: parseIntOrNull(String(fd.get("runtimeMinutes") ?? "")),
         whereToWatch: String(fd.get("whereToWatch") ?? "").trim() || null,
         notes: String(fd.get("notes") ?? "").trim() || null,

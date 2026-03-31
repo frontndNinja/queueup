@@ -29,6 +29,7 @@ export default function AddTMDBItemToQueue({ item, alreadyInQueue, onAdded }: { 
         fd.append("status", item.status);
         fd.append("priority", item.priority);
         fd.append("releaseYear", item.releaseYear?.toString() ?? "");
+        fd.append("releaseDate", item.releaseDate?.toString() ?? "");
         fd.append("runtimeMinutes", item.runtimeMinutes?.toString() ?? "");
         fd.append("whereToWatch", item.whereToWatch ?? "");
         fd.append("notes", item.notes ?? "");
@@ -38,7 +39,6 @@ export default function AddTMDBItemToQueue({ item, alreadyInQueue, onAdded }: { 
         fd.append("imdbId", item.imdbId ?? "");
         fd.append("posterUrl", item.posterUrl ?? "");
         fd.append("posterUrlThumbnail", item.posterUrlThumbnail ?? "");
-
         const payload = buildNewItemFieldsFromFormData(fd);
 
         const validationError = validateNewItemFields(payload);

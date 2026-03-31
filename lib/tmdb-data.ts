@@ -8,6 +8,7 @@ export function tmdbData(item: TMDBItem, type: string) {
         description: item.overview,
         type: type === "series" ? "SERIES" : "MOVIE",
         releaseYear: new Date(item.release_date).getFullYear() ?? null,
+        releaseDate: item.release_date ?? null,
         tags: item.genre_ids ? item.genre_ids.map((id: number) => id.toString()) : [],
         posterUrl: `https://image.tmdb.org/t/p/w500/${item.poster_path}`,
         posterUrlThumbnail: `https://image.tmdb.org/t/p/w342/${item.poster_path}`,

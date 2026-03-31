@@ -118,6 +118,7 @@
   --color-pill-red: var(--color-pill-red);
   --color-pill-green: var(--color-pill-green);
   --color-pill-blue: var(--color-pill-blue);
+  --color-pill-yellow: var(--color-pill-yellow);
 
   --breakpoint-xxs: 20rem;
   /* 320px */
@@ -183,7 +184,7 @@
   --color-pill-red: #fc3939;
   --color-pill-green: #21de66;
   --color-pill-blue: #1c81fd;
-
+  --color-pill-yellow: #f5e90b;
 }
 
 .dark {

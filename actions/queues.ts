@@ -81,24 +81,44 @@ export async function getQueueById(queueId: string) {
             },
         }
     });
+
     const priorityRank: Record<"HIGH" | "MEDIUM" | "LOW", number> = {
-        HIGH: 0,
-        MEDIUM: 1,
-        LOW: 2,
+        HIGH: 4,
+        MEDIUM: 2,
+        LOW: 0,
+    };
+
+    const statusRank: Record<"PLANNED" | "WATCHED" | "SKIPPED", number> = {
+        PLANNED: 2,
+        WATCHED: 1,
+        SKIPPED: 0,
     };
 
     return queues.map((q) => {
-        const entriesWithScore = q.entries.map((e) => ({
-            ...e,
-            voteScore: calcVoteScore(e.votes),
-        }));
+        const entriesWithScore = q.entries.map((e) => {
+            const voteScore = calcVoteScore(e.votes);
+            const voteCount = e.votes.length;
+            const rankScore = voteScore + priorityRank[e.priority] * voteCount;
+
+            return {
+                ...e,
+                voteScore,
+                voteCount,
+                rankScore,
+            };
+        });
+
         entriesWithScore.sort((a, b) => {
-            /* const prio = priorityRank[a.priority] - priorityRank[b.priority];
-            if (prio !== 0) return prio; */
-            const score = b.voteScore - a.voteScore;
-            if (score !== 0) return score;
+            const status = statusRank[b.status] - statusRank[a.status];
+            if (status !== 0) return status;
+
+            const rank = b.rankScore - a.rankScore;
+            if (rank !== 0) return rank;
+
+
             return b.createdAt.getTime() - a.createdAt.getTime();
         });
+
         return { ...q, entries: entriesWithScore };
     });
 }

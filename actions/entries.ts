@@ -88,7 +88,7 @@ export async function createEntry(
 ): Promise<CreateEntryResult> {
     const user = await getUser();
     if (!user) return { ok: false, error: "You must be signed in." };
-
+    console.log("data", data);
     const allowed = await prisma.queue.findFirst({
         where: {
             id: queueId,
@@ -118,6 +118,7 @@ export async function createEntry(
             status: data.status,
             priority: data.priority,
             releaseYear: data.releaseYear,
+            releaseDate: data.releaseDate ?? null,
             runtimeMinutes: data.runtimeMinutes,
             whereToWatch: data.whereToWatch?.trim() || null,
             notes: data.notes?.trim() || null,

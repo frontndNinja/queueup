@@ -130,6 +130,7 @@ model Entry {
   priority    EntryPriority @default(MEDIUM)
 
   releaseYear    Int?
+  releaseDate    String?
   runtimeMinutes Int?
   whereToWatch   String?
   notes          String?

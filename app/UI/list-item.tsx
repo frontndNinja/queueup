@@ -10,7 +10,6 @@ import DeleteEntryButton from "./form-elements/delete-entry-button";
 export default function ListItem({ item, singleItem, currentUserId, addItem, alreadyInQueue, onAdded }: { item: EntryWithRelationsAndVotes; singleItem?: boolean; statusOptions?: QuickAction; currentUserId: string; addItem?: boolean; alreadyInQueue?: boolean; onAdded?: (tmdbId: number) => void; }) {
 
     singleItem = singleItem ?? false;
-
     const formatLocalDateTime = (value: string | number | Date) =>
         new Intl.DateTimeFormat(undefined, {
             year: "numeric",
@@ -32,7 +31,7 @@ export default function ListItem({ item, singleItem, currentUserId, addItem, alr
 
     const typeIcon = item.type === "MOVIE" ? "FilmIcon" : "TvMinimalPlayIcon";
     const statusIcon = item.status === "PLANNED" ? "CheckIcon" : item.status === "WATCHED" ? "ClockCheckIcon" : "OctagonXIcon";
-    const statusColor = item.status === "PLANNED" ? "green" : item.status === "WATCHED" ? "blue" : "red";
+    const statusColor = item.status === "PLANNED" ? "yellow" : item.status === "WATCHED" ? "green" : "red";
     const priorityColor = item.priority === "LOW" ? "green" : item.priority === "MEDIUM" ? "blue" : "red";
     const priorityIcon = item.priority === "LOW" ? "CircleChevronDownIcon" : item.priority === "MEDIUM" ? "CircleMinusIcon" : "CircleChevronUpIcon";
 
@@ -78,7 +77,14 @@ export default function ListItem({ item, singleItem, currentUserId, addItem, alr
                             <DeleteEntryButton entryId={item.id} queueId={item.queueId} />
                         )}
                     </div>
-                    <p className={`text-sm w-full text-gray-500 md:max-w-md ${singleItem ? "line-clamp-none" : "line-clamp-3"} mb-4`}>{item.description}</p>
+                    <p className={`text-sm w-full text-gray-500 md:max-w-md ${singleItem ? "line-clamp-none" : "line-clamp-3"} mb-2`}>{item.description}</p>
+                    {singleItem && item.releaseDate && (
+                        <p className={`text-sm w-full text-gray-400 md:max-w-md mb-4`}>Release Date: {new Date(item.releaseDate).toLocaleDateString()}</p>
+                    )}
+                    <p className={`text-sm w-full text-gray-500 md:max-w-md ${singleItem ? "line-clamp-none" : "line-clamp-3"} mb-2`}>{item.description}</p>
+                    {singleItem && !item.releaseDate && item.releaseYear && (
+                        <p className={`text-sm w-full text-gray-400 md:max-w-md mb-4`}>Release year: {item.releaseYear}</p>
+                    )}
                     {singleItem && (
                         <div className="flex items-center gap-2">
 
