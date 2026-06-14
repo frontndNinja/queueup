@@ -6,7 +6,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     /* AUTHENTICATION */
     const user = await requireUser().catch(() => null);
     if (user?.userId === '') {
-        redirect('/api/auth/signin');
+        redirect('/login');
     }
 
     return (

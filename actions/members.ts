@@ -1,24 +1,11 @@
-
-/* import { caching, revalidationTags } from "@/config/caching";
-import { apiGetJwtBearer } from "./apiGetJwtBearer"; */
-/* import { users } from "@/lib/dummyData";
-
-
-export default async function getMembers() {
-    const members = users;
-    //const members = await prisma.member.findMany();
-    return members;
-} */
-
 "use server";
 
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/session";
 
 export async function getMember() {
-    const session = await getServerSession(authOptions);
-    const userId = session?.user?.id;
+    const session = await getCurrentUser();
+    const userId = session?.id;
     if (!userId) return null;
 
     const user = await prisma.user.findUnique({

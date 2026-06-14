@@ -6,8 +6,8 @@ import { EntryWithRelationsAndVotes } from '@/app/definitions/definitions';
 import Link from 'next/link';
 import Breadcrumb from '@/app/UI/breadcrumb';
 import { PencilIcon } from 'lucide-react';
-import { getTMDBMoviesAndSeries } from '@/actions/tmdbAPI';
-import { searchTMDB } from '@/actions/tmdbAPI';
+/* import { getTMDBMoviesAndSeries } from '@/actions/tmdbAPI';
+import { searchTMDB } from '@/actions/tmdbAPI'; */
 import AddItemNav from '@/app/UI/add-item-nav';
 import { getUser } from '@/actions/users';
 import { User } from '@/app/definitions/definitions';
@@ -25,20 +25,20 @@ export default async function QueuePage({
 }) {
 
     const { queueId } = await params;
-    const { q } = await searchParams;
     const queue = await getQueueById(queueId);
-    let moviesAndSeries = await getTMDBMoviesAndSeries();
+    /*     let moviesAndSeries = await getTMDBMoviesAndSeries(); */
     const user = await getUser() as User;
     if (!user) return null;
+    const { q } = await searchParams;
 
 
     if (!queue) {
         return <div>Queue not found or access denied.</div>;
     }
     const query = q?.trim() ?? "";
-    if (query.length > 0) {
-        moviesAndSeries = query ? await searchTMDB(query, 1) : [];
-    }
+    /*  if (query.length > 0) {
+         moviesAndSeries = query ? await searchTMDB(query, 1) : [];
+     } */
 
 
     return (
@@ -55,7 +55,7 @@ export default async function QueuePage({
                             <PencilIcon />
                         </Link>
                     </div>
-                    <AddItemNav queueId={queueId} user={user} moviesAndSeries={moviesAndSeries} searchUrl={"/dashboard/queue/" + queueId} />
+                    <AddItemNav queueId={queueId} user={user} searchUrl={"/dashboard/queue/" + queueId} query={query} queue={queue} />
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">{queue[0].description}</p>
                 <div className="flex flex-col gap-4">

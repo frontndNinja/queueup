@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
 import { getUser } from "@/actions/users";
 import { getMemberQueues } from "@/actions/queues";
 import { TicketPlusIcon } from "lucide-react";
@@ -16,14 +14,15 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel";
 import Breadcrumb from "@/app/UI/breadcrumb";
+import { getCurrentUser } from "@/lib/session";
 
 export const metadata: Metadata = {
     title: "Dashboard",
 };
 
 export default async function DashboardPage() {
-    const session = await getServerSession(authOptions);
-    const userId = session?.user?.id;
+    const session = await getCurrentUser();
+    const userId = session?.id;
 
     if (!userId) {
         return <div className="min-h-screen p-6">Not authenticated.</div>;

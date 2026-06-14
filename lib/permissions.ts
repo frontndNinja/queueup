@@ -1,51 +1,6 @@
-/* //requireQueueMember/Owner helpersimport { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-export async function requireUser() {
-    const session = await getServerSession(authOptions);
-    const userId = (session?.user as any)?.id;
-    if (!userId) throw new Error("UNAUTHENTICATED");
-    return { userId, session };
-}
-
-export async function requireQueueMember(queueId: string) {
-    const { userId } = await requireUser();
-
-    const queue = await prisma.queue.findUnique({
-        where: { id: queueId },
-        select: { id: true, ownerId: true },
-    });
-    if (!queue) throw new Error("NOT_FOUND");
-
-    if (queue.ownerId === userId) return { userId, role: "OWNER" as const };
-
-    const member = await prisma.queueMember.findUnique({
-        where: { queueId_userId: { queueId, userId } },
-        select: { role: true },
-    });
-    if (!member) throw new Error("FORBIDDEN");
-
-    return { userId, role: member.role };
-}
-
-export async function requireQueueOwner(queueId: string) {
-    const { userId } = await requireUser();
-    const queue = await prisma.queue.findUnique({
-        where: { id: queueId },
-        select: { ownerId: true },
-    });
-    if (!queue) throw new Error("NOT_FOUND");
-    if (queue.ownerId !== userId) throw new Error("FORBIDDEN");
-    return { userId };
-}
- */
-
-
-import { getServerSession } from "next-auth/next";
 import type { QueueRole } from "@prisma/client";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/session";
 
 type RequiredUser = {
     userId: string;
@@ -53,13 +8,10 @@ type RequiredUser = {
 };
 
 export async function requireUser(): Promise<RequiredUser> {
-    const session = await getServerSession(authOptions);
-    const user = session?.user as { id?: string; email?: string | null; } | undefined;
+    const session = await getCurrentUser();
+    const user = session as { id?: string; email?: string | null; } | undefined;
     const userId = user?.id;
 
-    /*   if (!userId) {
-          throw new Error("UNAUTHENTICATED");
-      } */
     if (!userId) {
         return {
             userId: "" as string,

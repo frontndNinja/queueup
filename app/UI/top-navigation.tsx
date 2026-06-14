@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SignOutButton from './form-elements/signout-button';
 import { UserCircle2 } from "lucide-react";
 import { User } from '@/app/definitions/definitions';
@@ -7,15 +7,26 @@ import Image from 'next/image';
 import Button from './base/button';
 import { useRouter } from 'next/navigation';
 import ClickAwayListener from 'react-click-away-listener';
+import { getMyPendingInvites } from "@/actions/invites";
 
 
-
-export default function TopNavigation({ user, invites }: { user: User | null; invites: number; }) {
+export default function TopNavigation({ user }: { user: User | null; }) {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const router = useRouter();
+    const [invites, setInvites] = useState(0);
+
+    useEffect(() => {
+        const fetchInvites = async () => {
+            const invites = await getMyPendingInvites();
+            setInvites(invites.length);
+        };
+        fetchInvites();
+    }, [isProfileOpen]);
+
     const handleClickAway = () => {
         setIsProfileOpen(false);
     };
+
     return (
         <div className="flex items-center justify-between h-[70px] px-14 fixed top-0 left-0 right-0 z-50 bg-lighter-background">
             <div className="w-fit">
@@ -60,7 +71,7 @@ export default function TopNavigation({ user, invites }: { user: User | null; in
 
 
                 {!user && (
-                    <Button text="Login" icon="LogInIcon" goTo={'/api/auth/signin'} />
+                    <Button text="Login" icon="LogInIcon" goTo={'/login'} />
                 )}
             </div>
         </div>
